@@ -12,6 +12,8 @@ from watchdog.observers import Observer
 
 from cync.handler import ScpGitEventHandler
 
+EXTENSIONS = "j2,py,sh,yml,json,yaml,txt,md,toml,conf,service,Dockerfile"
+
 
 @click.command(
     name="cync",
@@ -24,7 +26,9 @@ from cync.handler import ScpGitEventHandler
     required=False,
 )
 @click.option(
-    "--extensions", "-e", default="j2,py,sh,yml,json,yaml,txt,md,toml,conf,service"
+    "--extensions",
+    "-e",
+    default="",
 )
 @click.option("--create-if-missing", "-c", is_flag=True)
 @click.option("--reset-targets", is_flag=True)
@@ -55,6 +59,11 @@ def cync(
         path = os.getcwd()
     if not path.endswith("/"):
         path += "/"
+
+    if extensions:
+        extensions = f"{EXTENSIONS},{extensions}"
+    else:
+        extensions = EXTENSIONS
 
     event_handler = ScpGitEventHandler(
         extensions=extensions,
